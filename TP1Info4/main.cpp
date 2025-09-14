@@ -1,4 +1,6 @@
 #include <iostream>
+#include <random>
+#include <math.h>
 using namespace std;
 
 struct Case
@@ -7,7 +9,11 @@ struct Case
     int lig, col;
     Case* suivant;
 };
-
+struct coord {
+    int x;
+    int y;
+};
+//1
 Case* initListCaseVideIter(Case* tete, int taille)
 {
     tete = NULL;
@@ -24,6 +30,7 @@ Case* initListCaseVideIter(Case* tete, int taille)
     }
     return tete;
 }
+//2
 Case* initListCaseVideRec(int taille, int i = 0, int j = 0)
 {
     if (i >= taille)
@@ -45,6 +52,7 @@ Case* initListCaseVideRec(int taille, int i = 0, int j = 0)
     return newNode;
 }
 
+//teste recursive
 void afficheExempleRec(Case* tete, int taille, int compteur = 0)
 {
     if (tete == NULL)
@@ -63,7 +71,7 @@ void afficheExempleRec(Case* tete, int taille, int compteur = 0)
     }
 }
 
-
+//teste iter
 void afficheExempleIter(Case* tete, int taille)
 {
     if (tete == NULL)
@@ -87,7 +95,7 @@ void afficheExempleIter(Case* tete, int taille)
         cout << endl;
     }
 }
-
+//3
 int lenghListeRec(Case* tete)
 {
     if (tete == NULL)
@@ -95,28 +103,126 @@ int lenghListeRec(Case* tete)
         cout << " Liste Vide " << endl;
         return 0;
     }
+    
+    
+    else  return 1 + lenghListeRec(tete->suivant);
+}
+//4 via pointeur
+
+void rechercheAlea(Case* tete, int taille, int* i, int* j)
+{
+    if (tete == NULL)
+    {
+        cout << " Liste Vide " << endl;
+        *i = -1;
+        *j = -1;
+        return;
+    }
+    else
+    {
+        
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<>dist(0, taille-1);
+        *i = dist(gen);
+        *j = dist(gen);
+    }
+}
+//4 via structure
+coord AleaRecherche(Case* tete, int taille)
+{
+    coord Z;
+    if (tete == NULL)
+    {
+        cout << " Liste Vide " << endl;
+        Z.x = -1;
+        Z.y = -1;
+        return Z;
+    }
+    else
+    {
+        
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<>dist(0, taille-1);
+        Z.x = dist(gen);
+        Z.y = dist(gen);
+    }
+        return Z;
+    
+}
+//5
+bool estPrise(int i, int j, int xDame, int yDame)
+{
+// L'emplacement est prenable si elle est libre
+// Sinon elle  est prenable
+  
+        // Même ligne
+        if (i == xDame && j != yDame) return true;
+        
+        // Même colonne
+        if (j == yDame && i != xDame) return true;
+        
+        // Même diagonale
+        if (abs(i - xDame) == abs(j - yDame) && (i != xDame || j != yDame)) {
+            return true;
+        }
+        
+        return false;
+}
+ 
+//6
+void MAJ(Case* tete, int xDame, int yDame)
+{
+    if (tete == NULL)
+    {
+        cout << " Liste Vide " << endl;
+        return;
+    }
+    Case* temp = tete;
+    Case* prec = NULL;
+    while (temp != NULL)
+    {
+       
+        if (estPrise(temp->lig, temp->col, xDame, yDame))
+        {
+            prec->suivant = temp->suivant;
+            delete temp;
+            prec = temp;
+            temp = temp->suivant;
+        }
+    }
    
     
-      else  return 1 + lenghListeRec(tete->suivant);
-            
-
 }
-    
 
 int  main()
 {
+    
+    int i,j;
     int taille = 8;
     Case* tete = NULL;
     Case* result = initListCaseVideIter(tete, taille);
     afficheExempleIter(result, taille);
+    
     cout << endl;
     cout << " #########################" << endl;
     cout << endl;
+    
     Case* result1 = initListCaseVideRec(taille, 0, 0);
     afficheExempleRec(result1, taille);
     
     int result2 = lenghListeRec(result1);
     cout << endl;
+    
     cout << "La liste contient : " << result2 << " Cases " << endl;
+    cout << endl;
+    
+    rechercheAlea(result, taille, &i, &j);
+    cout<< " Coordonnee Alea : " << "( " << i <<" - " << j << " )" << endl;
+    cout << endl;
+    
+    coord coordonnees = AleaRecherche(result, taille);
+    cout<< " Coordonnee Alea : " << "( " << coordonnees.x <<" - " << coordonnees.y << " )" << endl;
     return 0;
 }
