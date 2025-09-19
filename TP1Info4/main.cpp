@@ -52,6 +52,7 @@ Case* initListCaseVideRec(int taille, int i = 0, int j = 0)
     return newNode;
 }
 
+
 //teste recursive
 void afficheExempleRec(Case* tete, int taille, int compteur = 0)
 {
@@ -196,6 +197,61 @@ void MAJ(Case* tete, int xDame, int yDame)
     
 }
 
+bool ajouteDame(Case** tete, int i, int j)
+{
+    if (tete == NULL)
+    {
+        Case* newNode = new Case;
+        newNode->lig = i;
+        newNode->col = j;
+        newNode->suivant = *tete;
+        *tete = newNode;
+    }
+    Case* temp = *tete;
+    while (temp != NULL)
+    {
+        if (estPrise(i, j, temp->lig, temp->col))
+        {
+            return false;
+            
+        }
+        else
+        {
+            temp = temp->suivant;
+            
+        }
+    }
+    Case* newNode = new Case;
+    newNode->lig = i;
+    newNode->col = j;
+    newNode->suivant = *tete;
+    *tete = newNode;
+    return true;
+    
+}
+
+bool AJouteDame(Case** tete, Case* x)
+{
+    if (*tete == NULL)
+    {
+        x->suivant = *tete;
+        *tete = x;
+        return true;
+    }
+    else{
+        
+        if (estPrise(x->lig, x->col, (*tete)->lig, (*tete)->col))
+        {
+            return false;
+        }
+    }
+         return AJouteDame(&(*tete)->suivant, x);
+     
+}
+
+
+
+
 int  main()
 {
     
@@ -208,6 +264,22 @@ int  main()
     cout << endl;
     cout << " #########################" << endl;
     cout << endl;
+    Case* temp = tete;
+    int maxEssai = 8;
+    int nbrDame = 0;
+    while (temp != NULL)
+    {
+        ajouteDame(&temp, temp->lig, temp->col);
+        nbrDame++;
+        temp = temp->suivant;
+        if (nbrDame == maxEssai)
+        {
+            temp = temp->suivant;
+        }
+        else{
+            cout << " Nombre de tour atteint " << endl;
+        }
+}
     
     Case* result1 = initListCaseVideRec(taille, 0, 0);
     afficheExempleRec(result1, taille);
@@ -224,5 +296,11 @@ int  main()
     
     coord coordonnees = AleaRecherche(result, taille);
     cout<< " Coordonnee Alea : " << "( " << coordonnees.x <<" - " << coordonnees.y << " )" << endl;
+    
+    
+    
+    
+    
+    
     return 0;
 }
